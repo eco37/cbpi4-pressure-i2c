@@ -1,1 +1,1 @@
-# cbpi4-pressure-i2c
+# craftbeerpi4-plugin-template
