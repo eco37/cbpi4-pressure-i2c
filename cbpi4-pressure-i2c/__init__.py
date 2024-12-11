@@ -82,7 +82,11 @@ class PressureSensori2c(CBPiSensor):
     async def run(self):
         while self.running is True:
             
-            psi = (self.scale * self.chan.voltage) + self.calc_offset
+            try:
+                psi = (self.scale * self.chan.voltage) + self.calc_offset
+            except Exception as e:
+                logger.warning("Error reading voltage: {}".format(e))
+                continue
 
             if self.unit == "PSI":
                 self.value = psi + self.offset
