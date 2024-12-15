@@ -95,6 +95,7 @@ class PressureSensori2c(CBPiSensor):
             
             #print(f"MQ-135 Voltage: {chan.voltage}V , {chan.value}, {P}, {psi} PSI, {bar} BAR")
             self.push_update(self.value)
+            self.log_data(self.value)
             await asyncio.sleep(self.interval)
     
     def get_state(self):
