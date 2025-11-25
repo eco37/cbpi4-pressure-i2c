@@ -86,6 +86,7 @@ class PressureSensori2c(CBPiSensor):
                 psi = (self.scale * self.chan.voltage) + self.calc_offset
             except Exception as e:
                 logger.warning("Error reading voltage: {}".format(e))
+                await asyncio.sleep(self.interval)
                 continue
 
             if self.unit == "PSI":
