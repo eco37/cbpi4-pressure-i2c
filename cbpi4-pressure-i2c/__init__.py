@@ -81,7 +81,8 @@ class PressureSensori2c(CBPiSensor):
 
     async def run(self):
         while self.running is True:
-            
+            self.value = self.value
+
             try:
                 psi = (self.scale * self.chan.voltage) + self.calc_offset
                 if self.unit == "PSI":
@@ -89,15 +90,14 @@ class PressureSensori2c(CBPiSensor):
                 if self.unit == "kPa":
                     self.value = round(psi * 6.89476) + self.offset
 
-                #print(f"MQ-135 Voltage: {chan.voltage}V , {chan.value}, {P}, {psi} PSI, {bar} BAR")
-                self.push_update(self.value)
-                self.log_data(self.value)
             except Exception as e:
                 logger.warning("Error reading voltage: {} {}".format(e, self.foo))
                 #await asyncio.sleep(self.interval)
                 #continue
 
-
+            #print(f"MQ-135 Voltage: {chan.voltage}V , {chan.value}, {P}, {psi} PSI, {bar} BAR")
+            self.push_update(self.value)
+            self.log_data(self.value)
             await asyncio.sleep(self.interval)
     
     def get_state(self):
