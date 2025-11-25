@@ -83,7 +83,7 @@ class PressureSensori2c(CBPiSensor):
         while self.running is True:
             
             try:
-                await v = self.chan.voltage
+                v = await self.chan.voltage
                 psi = (self.scale * v) + self.calc_offset
                 if self.unit == "PSI":
                     self.value = psi + self.offset
