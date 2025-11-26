@@ -31,13 +31,11 @@ class PressureSensori2c(CBPiSensor):
     interval = 1
     offset = 0
     unit = "kPa"
-    analog_pin = 0
-    ads_chip = 0
 
     def __init__(self, cbpi, id, props):
         super(PressureSensori2c, self).__init__(cbpi, id, props)
         print("Init Pressure Sensor i2c Start")
-        
+
         self.value = 0
         offset2 = 0.527
         voltage_min = 0.527
@@ -47,11 +45,11 @@ class PressureSensori2c(CBPiSensor):
         self.foo = socket_nr
         bar = socket_nr
 
-        self.analog_pin = socket_nr
-        self.ads_chip = 0
+        analog_pin = socket_nr
+        ads_chip = 0
         if socket_nr > 4:
-            self.analog_pin = socket_nr - 4
-            self.ads_chip = 1
+            analog_pin = socket_nr - 4
+            ads_chip = 1
 
         psi_max = int(self.props.get("Max PSI", 80))
         self.interval = int(self.props.get("Interval",1))
@@ -65,57 +63,44 @@ class PressureSensori2c(CBPiSensor):
         t = voltage_max * self.scale
         self.calc_offset = psi_max - t
 
+        i2c = busio.I2C(board.SCL, board.SDA)
 
+        # Create the TCA9548A object and give it the I2C bus
+        tca = adafruit_tca9548a.TCA9548A(i2c)
+
+        # Create the ADS object and specify the gain
+        try:
+            ads = ADS.ADS1115(tca[ads_chip])
+            ads.gain = 1
+            self.chan = AnalogIn(ads, analog_pin)
+        except Exception as e:
+            self.cbpi.notify("Pressure Sensor Init Error","Cant read from input, ADS: {}, Pin: {}, Error: {}".format(ads_chip, analog_pin, e), NotificationType.ERROR)
+            return
 
         print("Init Pressure Sensor i2c Done")
 
     async def run(self):
         while self.running is True:
-            i2c = busio.I2C(board.SCL, board.SDA)
-            logger.warning(i2c.try_lock())
+            #self.value = self.value
 
-
-            # Create the TCA9548A object and give it the I2C bus
-            tca = adafruit_tca9548a.TCA9548A(i2c)
-            logger.warning("??????")
-
-            # Create the ADS object and specify the gain
-            try:
-                ads = ADS.ADS1115(tca[self.ads_chip])
-                logger.warning("??????")
-                ads.gain = 1
-                logger.warning("??????")
-                self.chan = AnalogIn(ads, self.analog_pin)
-                logger.warning("??????")
-            except Exception as e:
-                self.cbpi.notify("Pressure Sensor Init Error","Cant read from input, ADS: {}, Pin: {}, Error: {}".format(ads_chip, analog_pin, e), NotificationType.ERROR)
-                logger.warning("!??????")
-                await asyncio.sleep(2)
-                logger.warning("!!??????")
-                logger.warning(i2c.unlock())
-                logger.warning("!!!!??????")
-                continue
-            logger.warning("??????")
             try:
                 psi = (self.scale * self.chan.voltage) + self.calc_offset
-                logger.warning("??????")
                 #psi = 7
                 if self.unit == "PSI":
                     self.value = psi + self.offset
                 if self.unit == "kPa":
                     self.value = round(psi * 6.89476) + self.offset
-                logger.warning("??????")
+
             except Exception as e:
                 logger.warning("Error reading voltage: {} {}".format(e, self.foo))
                 #await asyncio.sleep(self.interval)
                 #continue
-            logger.warning(i2c.unlock())
 
             #print(f"MQ-135 Voltage: {chan.voltage}V , {chan.value}, {P}, {psi} PSI, {bar} BAR")
             self.push_update(self.value)
             self.log_data(self.value)
             await asyncio.sleep(2) #self.interval)
-    
+
     def get_state(self):
         return dict(value=self.value)
 
