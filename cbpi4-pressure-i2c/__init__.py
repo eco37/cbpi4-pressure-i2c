@@ -26,12 +26,11 @@ logger = logging.getLogger(__name__)
 class PressureSensori2c(CBPiSensor):
     scale = None
     calc_offset = None
-    #chan = None
+    chan = None
     foo = 23
     interval = 1
     offset = 0
     unit = "kPa"
-    i2c = None
 
     def __init__(self, cbpi, id, props):
         super(PressureSensori2c, self).__init__(cbpi, id, props)
@@ -64,38 +63,28 @@ class PressureSensori2c(CBPiSensor):
         t = voltage_max * self.scale
         self.calc_offset = psi_max - t
 
-        self.i2c = busio.I2C(board.SCL, board.SDA)
+        i2c = busio.I2C(board.SCL, board.SDA)
 
-        
+        # Create the TCA9548A object and give it the I2C bus
+        tca = adafruit_tca9548a.TCA9548A(i2c)
+
+        # Create the ADS object and specify the gain
+        try:
+            ads = ADS.ADS1115(tca[ads_chip])
+            ads.gain = 1
+            self.chan = AnalogIn(ads, analog_pin)
+        except Exception as e:
+            self.cbpi.notify("Pressure Sensor Init Error","Cant read from input, ADS: {}, Pin: {}, Error: {}".format(ads_chip, analog_pin, e), NotificationType.ERROR)
+            return
+
         print("Init Pressure Sensor i2c Done")
 
     async def run(self):
         while self.running is True:
             #self.value = self.value
 
-            while not self.i2c.try_lock():
-                await asyncio.sleep(1)
-
-            logger.warning("LOCKING I2C")
-            # Create the TCA9548A object and give it the I2C bus
-            tca = adafruit_tca9548a.TCA9548A(i2c)
-            
-    
-            # Create the ADS object and specify the gain
             try:
-                ads = ADS.ADS1115(tca[ads_chip])
-                ads.gain = 1
-                chan = AnalogIn(ads, analog_pin)
-            except Exception as e:
-                self.cbpi.notify("Pressure Sensor Init Error","Cant read from input, ADS: {}, Pin: {}, Error: {}".format(ads_chip, analog_pin, e), NotificationType.ERROR)
-                logger.warning("Error init analogIn")
-                self.i2c.unlock()
-                await asyncio.sleep(2)
-                continue
-
-
-            try:
-                psi = (self.scale * chan.voltage) + self.calc_offset
+                psi = (self.scale * self.chan.voltage) + self.calc_offset
                 #psi = 7
                 if self.unit == "PSI":
                     self.value = psi + self.offset
@@ -106,8 +95,7 @@ class PressureSensori2c(CBPiSensor):
                 logger.warning("Error reading voltage: {} {}".format(e, self.foo))
                 #await asyncio.sleep(self.interval)
                 #continue
-            self.i2c.unlock()
-            
+
             #print(f"MQ-135 Voltage: {chan.voltage}V , {chan.value}, {P}, {psi} PSI, {bar} BAR")
             self.push_update(self.value)
             self.log_data(self.value)
