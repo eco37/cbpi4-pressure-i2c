@@ -31,6 +31,7 @@ class PressureSensori2c(CBPiSensor):
     interval = 1
     offset = 0
     unit = "kPa"
+    i2c = None
 
     def __init__(self, cbpi, id, props):
         super(PressureSensori2c, self).__init__(cbpi, id, props)
@@ -63,10 +64,10 @@ class PressureSensori2c(CBPiSensor):
         t = voltage_max * self.scale
         self.calc_offset = psi_max - t
 
-        i2c = busio.I2C(board.SCL, board.SDA)
+        self.i2c = busio.I2C(board.SCL, board.SDA)
 
         # Create the TCA9548A object and give it the I2C bus
-        tca = adafruit_tca9548a.TCA9548A(i2c)
+        tca = adafruit_tca9548a.TCA9548A(self.i2c)
 
         # Create the ADS object and specify the gain
         try:
@@ -93,6 +94,7 @@ class PressureSensori2c(CBPiSensor):
 
             except Exception as e:
                 logger.warning("Error reading voltage: {} {}".format(e, self.foo))
+                self.i2c.unlock()
                 #await asyncio.sleep(self.interval)
                 #continue
 
