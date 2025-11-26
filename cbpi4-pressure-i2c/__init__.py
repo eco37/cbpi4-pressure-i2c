@@ -86,6 +86,7 @@ class PressureSensori2c(CBPiSensor):
             except Exception as e:
                 self.cbpi.notify("Pressure Sensor Init Error","Cant read from input, ADS: {}, Pin: {}, Error: {}".format(ads_chip, analog_pin, e), NotificationType.ERROR)
                 await asyncio.sleep(2)
+                logger.warning(i2c.unlock())
                 continue
 
             try:
