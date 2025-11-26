@@ -76,6 +76,7 @@ class PressureSensori2c(CBPiSensor):
             while not self.i2c.try_lock():
                 await asyncio.sleep(1)
 
+            logger.warning("LOCKING I2C")
             # Create the TCA9548A object and give it the I2C bus
             tca = adafruit_tca9548a.TCA9548A(i2c)
             
@@ -87,7 +88,10 @@ class PressureSensori2c(CBPiSensor):
                 chan = AnalogIn(ads, analog_pin)
             except Exception as e:
                 self.cbpi.notify("Pressure Sensor Init Error","Cant read from input, ADS: {}, Pin: {}, Error: {}".format(ads_chip, analog_pin, e), NotificationType.ERROR)
-                return
+                logger.warning("Error init analogIn")
+                self.i2c.unlock()
+                await asyncio.sleep(2)
+                continue
 
 
             try:
