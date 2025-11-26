@@ -90,6 +90,7 @@ class PressureSensori2c(CBPiSensor):
 
             try:
                 psi = (self.scale * self.chan.voltage) + self.calc_offset
+                #psi = 7
                 if self.unit == "PSI":
                     self.value = psi + self.offset
                 if self.unit == "kPa":
@@ -104,7 +105,7 @@ class PressureSensori2c(CBPiSensor):
             #print(f"MQ-135 Voltage: {chan.voltage}V , {chan.value}, {P}, {psi} PSI, {bar} BAR")
             self.push_update(self.value)
             self.log_data(self.value)
-            await asyncio.sleep(2)
+            await asyncio.sleep(2) #self.interval)
     
     def get_state(self):
         return dict(value=self.value)
