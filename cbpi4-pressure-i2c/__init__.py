@@ -77,26 +77,31 @@ class PressureSensori2c(CBPiSensor):
 
             # Create the TCA9548A object and give it the I2C bus
             tca = adafruit_tca9548a.TCA9548A(i2c)
+            logger.warning("??????")
 
             # Create the ADS object and specify the gain
             try:
                 ads = ADS.ADS1115(tca[self.ads_chip])
+                logger.warning("??????")
                 ads.gain = 1
+                logger.warning("??????")
                 self.chan = AnalogIn(ads, self.analog_pin)
+                logger.warning("??????")
             except Exception as e:
                 self.cbpi.notify("Pressure Sensor Init Error","Cant read from input, ADS: {}, Pin: {}, Error: {}".format(ads_chip, analog_pin, e), NotificationType.ERROR)
                 await asyncio.sleep(2)
                 logger.warning(i2c.unlock())
                 continue
-
+            logger.warning("??????")
             try:
                 psi = (self.scale * self.chan.voltage) + self.calc_offset
+                logger.warning("??????")
                 #psi = 7
                 if self.unit == "PSI":
                     self.value = psi + self.offset
                 if self.unit == "kPa":
                     self.value = round(psi * 6.89476) + self.offset
-
+                logger.warning("??????")
             except Exception as e:
                 logger.warning("Error reading voltage: {} {}".format(e, self.foo))
                 #await asyncio.sleep(self.interval)
