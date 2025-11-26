@@ -85,7 +85,7 @@ class PressureSensori2c(CBPiSensor):
 
             try:
                 #psi = (self.scale * self.chan.voltage) + self.calc_offset
-                psi = 13
+                psi = 7
                 if self.unit == "PSI":
                     self.value = psi + self.offset
                 if self.unit == "kPa":
