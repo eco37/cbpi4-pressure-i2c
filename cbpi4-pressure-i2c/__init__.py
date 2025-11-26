@@ -31,8 +31,8 @@ class PressureSensori2c(CBPiSensor):
     interval = 1
     offset = 0
     unit = "kPa"
-    self.analog_pin = 0
-    self.ads_chip = 0
+    analog_pin = 0
+    ads_chip = 0
 
     def __init__(self, cbpi, id, props):
         super(PressureSensori2c, self).__init__(cbpi, id, props)
