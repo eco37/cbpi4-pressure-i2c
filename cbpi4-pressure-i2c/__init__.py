@@ -12,9 +12,10 @@ from cbpi.api.dataclasses import NotificationType
 import time
 import board
 import busio
-import adafruit_ads1x15.ads1115 as ADS
-from adafruit_ads1x15.analog_in import AnalogIn
-#from adafruit_ads1x15 import ADS1015, AnalogIn, ads1x15
+
+#import adafruit_ads1x15.ads1115 as ADS
+#from adafruit_ads1x15.analog_in import AnalogIn
+from adafruit_ads1x15 import ADS1115, AnalogIn, ads1x15
 #import adafruit_tca9548a
 
 
@@ -77,7 +78,7 @@ class PressureSensori2c(CBPiSensor):
 
         # Create the ADS object and specify the gain
         try:
-            ads = ADS.ADS1115(i2c, address=address)
+            ads = ADS1115(i2c, address=address)
             ads.gain = 1
             self.chan = AnalogIn(ads, channel)
         except Exception as e:
