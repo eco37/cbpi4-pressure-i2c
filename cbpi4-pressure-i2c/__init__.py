@@ -82,7 +82,7 @@ class PressureSensori2c(CBPiSensor):
             ads.gain = 1
             self.chan = AnalogIn(ads, channel)
         except Exception as e:
-            self.cbpi.notify("Pressure Sensor Init Error","Cant read from input, ADS: {}, Pin: {}, Error: {}".format(ads_chip, analog_pin, e), NotificationType.ERROR)
+            self.cbpi.notify("Pressure Sensor Init Error","Cant read from input, Address: {}, Pin: {}, Error: {}".format(address, channel, e), NotificationType.ERROR)
             return
 
         print("Init Pressure Sensor i2c Done")
