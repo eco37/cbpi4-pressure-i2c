@@ -20,7 +20,7 @@ from adafruit_ads1x15.analog_in import AnalogIn
 logger = logging.getLogger(__name__)
 
 @parameters(Property.Select("Channel", options=["0", "1", "2", "3"], default_value = 0,
-                            description="Select hardware channel-number of ADS1x15 (Default is 0)"),
+                            description="Select hardware channel-number of ADS1x15 (Default is 0x48)"),
              Property.Select("Address", options=["0x48", "0x49", "0x4A", "0x4B"], default_value = "0x48"
                              description="Select hardware address-number of ADS1x15 (Default is 0x48)"),
              Property.Number(label="Max PSI",configurable = True, default_value = 80,

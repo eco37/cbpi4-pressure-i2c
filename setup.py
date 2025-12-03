@@ -12,4 +12,8 @@ setup(name='cbpi4-pressure-i2c',
       '': ['*.txt', '*.rst', '*.yaml'],
       'cbpi4-pressure-i2c': ['*','*.txt', '*.rst', '*.yaml']},
       packages=['cbpi4-pressure-i2c'],
+      install_requires=[
+      'adafruit-blinka',
+      'adafruit-ads1x15',
+      ]
      )
