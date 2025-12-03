@@ -36,6 +36,7 @@ class PressureSensori2c(CBPiSensor):
     #interval = 1
     offset = 0
     unit = "kPa"
+    print("Init Press")
 
     def __init__(self, cbpi, id, props):
         super(PressureSensori2c, self).__init__(cbpi, id, props)
@@ -110,7 +111,9 @@ class PressureSensori2c(CBPiSensor):
         return dict(value=self.value)
 
 def setup(cbpi):
+    print("Setup")
     #cbpi.plugin.register("MyCustomActor", CustomActor)
     cbpi.plugin.register("Pressure Sensor i2c", PressureSensori2c)
     #cbpi.plugin.register("MyustomWebExtension", CustomWebExtension)
+    print("Setup")
     pass
