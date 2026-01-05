@@ -60,7 +60,7 @@ class PressureSensori2c(CBPiSensor):
         t = voltage_max * self.scale
         self.calc_offset = psi_max - t
 
-        self.i2c = busio.I2C(board.SCL, board.SDA)
+        i2c = busio.I2C(board.SCL, board.SDA)
 
         # Create the ADS object and specify the gain
         try:
@@ -87,7 +87,6 @@ class PressureSensori2c(CBPiSensor):
 
             except Exception as e:
                 logger.warning("Error reading voltage: {} {}".format(e, self.foo))
-                self.i2c.unlock()
                 #await asyncio.sleep(self.interval)
                 #continue
 
