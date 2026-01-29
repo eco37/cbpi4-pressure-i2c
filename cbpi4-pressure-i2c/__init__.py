@@ -95,7 +95,8 @@ class PressureSensori2c(CBPiSensor):
         address = int(self.props.get("Address","0x48"), 16)
         self.voltage_max = float(self.props.get("Max Volt",0.5))
         self.voltage_min = float(self.props.get("Min Volt",4.5))
-        gain = round(float(self.props.get("Gain",1)),1)
+        #gain = round(float(self.props.get("Gain",1)),1)
+        gain = float(self.props.get("Gain",1))
         self.unit = self.cbpi.config.get("PRESSURE_UNIT", "kPa")
         if self.unit is None or self.unit == "" or not self.unit:
             self.unit = "kPa"
