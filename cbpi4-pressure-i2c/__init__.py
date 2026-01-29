@@ -101,8 +101,8 @@ class PressureSensori2c(CBPiSensor):
             self.unit = "kPa"
             self.cbpi.notify("Pressure Sensor Init Problem","Cant read config value: PRESSURE_UNIT. Unit set to {}".format(self.unit), NotificationType.WARNING)
 
-        self.scale = psi_max/(voltage_max - voltage_min)
-        t = voltage_max * self.scale
+        self.scale = psi_max/(self.voltage_max - voltage_min)
+        t = self.voltage_max * self.scale
         self.calc_offset = psi_max - t
 
         i2c = busio.I2C(board.SCL, board.SDA)
