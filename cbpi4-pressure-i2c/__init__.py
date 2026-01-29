@@ -67,6 +67,13 @@ class PressureSensori2c(CBPiSensor):
         self.x_cal_2=self.props.get("Calibration Point 2","")
         self.x_cal_3=self.props.get("Calibration Point 3","")
         
+        # Load calibration data from plugin
+        x = np.empty([0])
+        y = np.empty([0])
+        x, y = add_calibration_point(x, y, self.x_cal_1)
+        x, y = add_calibration_point(x, y, self.x_cal_2)
+        x, y = add_calibration_point(x, y, self.x_cal_3)
+
         # Create calibration equation
         if len(x) < 1:
             self.calibration_equ = "value"
