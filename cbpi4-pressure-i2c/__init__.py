@@ -130,7 +130,7 @@ class PressureSensori2c(CBPiSensor):
                 if self.unit == "kPa":
                     self.value = round(psi * 6.89476) #+ self.offset
 
-                self.value = calibrate(self.value, calibration_equ)
+                self.value = calibrate(self.value, self.calibration_equ)
             except Exception as e:
                 logger.warning("Error reading voltage: {} {}".format(e, self.foo))
                 #await asyncio.sleep(self.interval)
