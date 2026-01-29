@@ -42,7 +42,7 @@ def calibrate(value, equation):
                              description="Lowest Volt Value (Default is 0.5)"),
              Property.Number(label="Max Volt",configurable = True, default_value = 4.5,
                              description="Maximum Volt Value (Default is 4.5)"),
-             Property.Select("Gain", options=["2/3", "1", "2", "4", "8", "16"], default_value = "1",
+             Property.Select("Gain", options=["0.6666", "1", "2", "4", "8", "16"], default_value = "1",
                              description="2/3: +/-6.144V, 1: +/-4.096V, 2: +/-2.048V, 4: +/-1.024V, 8: +/-0.512V, 16: +/-0.256V (Default is 1)"),
              Property.Text(label="Calibration Point 1", configurable=True, default_value="", description="Optional field for calibrating your Tilt. Enter data in the format uncalibrated=actual"),
              Property.Text(label="Calibration Point 2", configurable=True, default_value="", description="Optional field for calibrating your Tilt. Enter data in the format uncalibrated=actual"),
