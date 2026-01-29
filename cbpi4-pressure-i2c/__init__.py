@@ -15,6 +15,8 @@ import busio
 
 from adafruit_ads1x15 import ADS1115, AnalogIn, ads1x15
 
+import numpy as np
+
 
 logger = logging.getLogger(__name__)
 
