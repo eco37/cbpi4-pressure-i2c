@@ -54,6 +54,7 @@ class PressureSensori2c(CBPiSensor):
     foo = 23
     offset = 0
     unit = "kPa"
+    i2c = None
 
     def __init__(self, cbpi, id, props):
         super(PressureSensori2c, self).__init__(cbpi, id, props)
@@ -106,11 +107,11 @@ class PressureSensori2c(CBPiSensor):
         t = self.voltage_max * self.scale
         self.calc_offset = psi_max - t
 
-        i2c = busio.I2C(board.SCL, board.SDA)
+        self.i2c = busio.I2C(board.SCL, board.SDA)
 
         # Create the ADS object and specify the gain
         try:
-            ads = ADS1115(i2c, address=address)
+            ads = ADS1115(self.i2c, address=address)
             ads.gain = gain
             self.chan = AnalogIn(ads, channel)
         except Exception as e:
@@ -140,6 +141,8 @@ class PressureSensori2c(CBPiSensor):
             #print(f"MQ-135 Voltage: {chan.voltage}V , {chan.value}, {P}, {psi} PSI, {bar} BAR")
             self.push_update(self.value)
             self.log_data(self.value)
+
+            self.i2c.unlock()
 
             await asyncio.sleep(2)
 
