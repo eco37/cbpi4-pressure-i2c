@@ -44,6 +44,8 @@ def calibrate(value, equation):
                              description="Maximum Volt Value (Default is 4.5)"),
              Property.Select("Gain", options=["0.6666666666666666", "1", "2", "4", "8", "16"], default_value = "1",
                              description="2/3: +/-6.144V, 1: +/-4.096V, 2: +/-2.048V, 4: +/-1.024V, 8: +/-0.512V, 16: +/-0.256V (Default is 1)"),
+             Property.Select("SPS", options=["8", "16", "32", "64", "128", "250". "475", "860"], default_value = "16",
+                             description="8=125ms, 16=62.5ms, 32=31.25, 64=15.625, 128=7.81, 250=4ms, 475=2.1ms, 860=1.16ms (Default is 16)"),
              Property.Text(label="Calibration Point 1", configurable=True, default_value="", description="Optional field for calibrating your Tilt. Enter data in the format uncalibrated=actual"),
              Property.Text(label="Calibration Point 2", configurable=True, default_value="", description="Optional field for calibrating your Tilt. Enter data in the format uncalibrated=actual"),
              Property.Text(label="Calibration Point 3", configurable=True, default_value="", description="Optional field for calibrating your Tilt. Enter data in the format uncalibrated=actual")])
@@ -98,6 +100,7 @@ class PressureSensori2c(CBPiSensor):
         self.voltage_min = float(self.props.get("Min Volt",4.5))
         #gain = round(float(self.props.get("Gain",1)),1)
         gain = float(self.props.get("Gain",1))
+        sps = int(self.props.get("Data Rate",16))
         self.unit = self.cbpi.config.get("PRESSURE_UNIT", "kPa")
         if self.unit is None or self.unit == "" or not self.unit:
             self.unit = "kPa"
@@ -113,7 +116,7 @@ class PressureSensori2c(CBPiSensor):
         try:
             ads = ADS1115(self.i2c, address=address)
             ads.gain = gain
-            ads.data_rate = 8
+            ads.data_rate = sps
             self.chan = AnalogIn(ads, channel)
         except Exception as e:
             self.cbpi.notify("Pressure Sensor Init Error","Cant read from input, Address: {}, Pin: {}, Error: {}".format(address, channel, e), NotificationType.ERROR)
